@@ -30,7 +30,8 @@ read_yes_or_abort_func() {
 }
 
 begin_func() {
-  prinf "\nBegin install? y/N\n"
+  echo ""
+  echo "Begin install? y/N"
   read_yes_or_abort_func
 }
 
@@ -80,7 +81,8 @@ config_select_arch_func() {
 
 config_local_interface_func() {
   if [ -z "$BIND_IFACE" ]; then
-    printf "Enter the local interface name from the list above, e.g. br0 (default) or nwg0\nYou can specify multiple interfaces separated by space, e.g. br0 nwg0\n"
+    echo "Enter the local interface name from the list above, e.g. br0 (default) or nwg0"
+    echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
     read BIND_IFACE
   fi
   if [ -z "$BIND_IFACE" ]; then
