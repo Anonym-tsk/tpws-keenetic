@@ -13,3 +13,8 @@ chmod +x ./tpws-keenetic/*.sh
 ./tpws-keenetic/install.sh
 ```
 
+### Uninstallation
+```
+./tpws-keenetic/uninstall.sh
+```
+
