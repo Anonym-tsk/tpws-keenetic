@@ -1,6 +1,7 @@
 #!/bin/sh
 
 CONFFILE=/opt/etc/tpws.conf
+LISTFILE=/opt/etc/tpws.list
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -57,6 +58,7 @@ config_copy_files_func() {
   chmod +x $NETFILTER_SCRIPT
 
   cp -f $HOME_FOLDER/etc/tpws.conf $CONFFILE
+  cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
 }
 
 config_select_arch_func() {
