@@ -6,7 +6,7 @@ HOME_FOLDER=`dirname "$ABSOLUTE_FILENAME"`
 source $HOME_FOLDER/common/install_func.sh
 
 # Start installation
-begin_func
+begin_install_func
 
 # Installing packages
 install_packages_func

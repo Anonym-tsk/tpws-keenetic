@@ -29,10 +29,24 @@ read_yes_or_abort_func() {
   esac
 }
 
-begin_func() {
+begin_install_func() {
   echo ""
   echo "Begin install? y/N"
   read_yes_or_abort_func
+}
+
+begin_uninstall_func() {
+  echo ""
+  echo "Begin uninstall? y/N"
+  read_yes_or_abort_func
+}
+
+remove_all_files_func() {
+  rm -f $CONFFILE
+  rm -f $LISTFILE
+  rm -f $TPWS_BIN
+  rm -f $INIT_SCRIPT
+  rm -f $NETFILTER_SCRIPT
 }
 
 check_old_config_func() {
