@@ -61,6 +61,7 @@ config_copy_files_func() {
 
 config_select_arch_func() {
   if [ -z "$ARCH" ]; then
+    echo ""
     echo "Select the router architecture: mips, mipsel (default), aarch64"
     read ARCH
   fi
@@ -81,6 +82,7 @@ config_select_arch_func() {
 
 config_local_interface_func() {
   if [ -z "$BIND_IFACE" ]; then
+    echo ""
     echo "Enter the local interface name from the list above, e.g. br0 (default) or nwg0"
     echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
     read BIND_IFACE
@@ -90,5 +92,5 @@ config_local_interface_func() {
   fi
   echo "Selected interface: $BIND_IFACE"
 
-  sed -i 's/LOCAL_INTERFACE="br0"/LOCAL_INTERFACE="'$BIND_IFACE'"/' $CONFFILE
+  sed -i 's/INPUT_LOCAL_INTERFACE/'$BIND_IFACE'/' $CONFFILE
 }
