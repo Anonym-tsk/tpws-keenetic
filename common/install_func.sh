@@ -73,7 +73,19 @@ config_copy_files_func() {
   chmod +x $NETFILTER_SCRIPT
 
   cp -f $HOME_FOLDER/etc/tpws.conf $CONFFILE
-  cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
+}
+
+config_copy_list_func() {
+  if [ -f "$LISTFILE" ]; then
+    echo -e "\nOld list file found: $LISTFILE. Overwrite? y/N"
+    read yn
+    case $yn in
+      [Yy]* )
+        cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE;;
+    esac
+  else
+    cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
+  fi
 }
 
 config_select_arch_func() {

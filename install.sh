@@ -20,6 +20,9 @@ stop_func
 # Copy files
 config_copy_files_func
 
+# Copy list
+config_copy_list_func
+
 # Download tpws binary
 config_select_arch_func
 
