@@ -1,0 +1,73 @@
+#!/bin/sh
+
+. /opt/etc/tpws.conf
+
+TPWS_BIN=/opt/usr/bin/tpws
+
+start() {
+  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+    echo 'Service TPWS is already running' >&2
+    return 1
+  fi
+
+  BIND_ADDR=""
+  for IFACE in $LOCAL_INTERFACE; do
+    IP=$(ip -4 addr show $IFACE | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $2}')
+    BIND_ADDR+="--bind-addr $IP"
+    echo "Bind address for interface $IFACE: $IP"
+  done
+
+  $TPWS_BIN --daemon $BIND_ADDR --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS
+
+  if [ -z "$(iptables-save 2>/dev/null | grep $BIND_PORT)" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
+  fi
+
+  echo 'Started TPWS service'
+}
+
+stop() {
+  if [ -n "$(iptables-save 2>/dev/null | grep $BIND_PORT)" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
+  fi
+
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo 'Service TPWS is not running' >&2
+    return 1
+  fi
+
+  echo 'Stopping TPWS service...'
+  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+}
+
+status() {
+  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+    echo 'Service TPWS is running'
+  else
+    echo 'Service TPWS is stopped'
+  fi
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+esac
