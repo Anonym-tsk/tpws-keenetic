@@ -108,9 +108,9 @@ config_select_mode_func() {
     read MODE
   fi
 
-  EXTRA_ARGS="--hostlist-auto=$CONFFILE"
+  EXTRA_ARGS="--hostlist-auto=$LISTFILE"
   if [ "$MODE" == "list" ]; then
-    EXTRA_ARGS="--hostlist=$CONFFILE"
+    EXTRA_ARGS="--hostlist=$LISTFILE"
   elif [ "$MODE" == "all" ]; then
     EXTRA_ARGS=""
   fi
@@ -119,7 +119,7 @@ config_select_mode_func() {
   fi
   echo "Selected mode: $MODE"
 
-  sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" $CONFFILE
+  sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" $LISTFILE
 }
 
 config_local_interface_func() {
