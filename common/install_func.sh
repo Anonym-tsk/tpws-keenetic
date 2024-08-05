@@ -2,6 +2,7 @@
 
 CONFFILE=/opt/etc/tpws.conf
 LISTFILE=/opt/etc/tpws.list
+LISTAUTOFILE=/opt/etc/tpws-auto.list
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -30,7 +31,8 @@ read_yes_or_abort_func() {
       ;;
     * )
       echo "Installation aborted"
-      exit;;
+      exit
+      ;;
   esac
 }
 
@@ -47,6 +49,7 @@ begin_uninstall_func() {
 remove_all_files_func() {
   rm -f $CONFFILE
   rm -f $LISTFILE
+  rm -f $LISTAUTOFILE
   rm -f $TPWS_BIN
   rm -f $INIT_SCRIPT
   rm -f $NETFILTER_SCRIPT
@@ -81,10 +84,13 @@ config_copy_list_func() {
     read yn
     case $yn in
       [Yy]* )
-        cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE;;
+        cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
+        cp -f $HOME_FOLDER/etc/tpws-auto.list $LISTAUTOFILE
+        ;;
     esac
   else
     cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
+    cp -f $HOME_FOLDER/etc/tpws-auto.list $LISTAUTOFILE
   fi
 }
 
@@ -120,14 +126,13 @@ config_select_mode_func() {
     read MODE
   fi
 
-  EXTRA_ARGS="--hostlist-auto=$LISTFILE"
   if [ "$MODE" == "list" ]; then
     EXTRA_ARGS="--hostlist=$LISTFILE"
   elif [ "$MODE" == "all" ]; then
     EXTRA_ARGS=""
-  fi
-  if [ -z "$MODE" ]; then
+  else
     MODE="auto"
+    EXTRA_ARGS="--hostlist=$LISTFILE --hostlist-auto=$LISTAUTOFILE"
   fi
   echo "Selected mode: $MODE"
 
