@@ -33,4 +33,6 @@ config_select_mode_func
 # Starting Services
 start_func
 
+echo "Installation successful"
+
 exit 0
