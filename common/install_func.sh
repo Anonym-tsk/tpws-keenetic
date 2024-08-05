@@ -94,6 +94,24 @@ config_select_arch_func() {
   chmod +x $TPWS_BIN
 }
 
+config_select_mode_func() {
+  if [ -z "$MODE" ]; then
+    echo ""
+    echo "Select working mode: auto (default), list, all"
+    read MODE
+  fi
+
+  EXTRA_ARGS="--hostlist-auto=$CONFFILE"
+  if [ "$MODE" == "list" ]; then
+    EXTRA_ARGS="--hostlist=$CONFFILE"
+  elif [ "$MODE" == "all" ]; then
+    EXTRA_ARGS=""
+  fi
+  echo "Selected mode: $MODE"
+
+  sed -i 's/INPUT_EXTRA_ARGS/'$EXTRA_ARGS'/' $CONFFILE
+}
+
 config_local_interface_func() {
   if [ -z "$BIND_IFACE" ]; then
     echo ""

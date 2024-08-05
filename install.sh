@@ -26,6 +26,9 @@ config_select_arch_func
 # Setup local interface
 config_local_interface_func
 
+# Setup working mode
+config_select_mode_func
+
 # Starting Services
 start_func
 
