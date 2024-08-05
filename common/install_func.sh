@@ -114,6 +114,9 @@ config_select_mode_func() {
   elif [ "$MODE" == "all" ]; then
     EXTRA_ARGS=""
   fi
+  if [ -z "$MODE" ]; then
+    MODE="auto"
+  fi
   echo "Selected mode: $MODE"
 
   sed -i "s/INPUT_EXTRA_ARGS/$EXTRA_ARGS/" $CONFFILE
