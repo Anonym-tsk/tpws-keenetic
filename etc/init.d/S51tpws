@@ -13,7 +13,7 @@ start() {
   BIND_ADDR=""
   for IFACE in $LOCAL_INTERFACE; do
     IP=$(ip -4 addr show $IFACE | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $2}')
-    BIND_ADDR+="--bind-addr $IP"
+    BIND_ADDR="$BIND_ADDR --bind-addr $IP"
     echo "Bind address for interface $IFACE: $IP"
   done
 
