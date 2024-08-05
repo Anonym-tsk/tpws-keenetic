@@ -17,7 +17,7 @@ start() {
     echo "Bind address for interface $IFACE: $IP"
   done
 
-  $TPWS_BIN --daemon $BIND_ADDR --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS
+  $TPWS_BIN --daemon $BIND_ADDR --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
 
   if [ -z "$(iptables-save 2>/dev/null | grep $BIND_PORT)" ]; then
     for IFACE in $LOCAL_INTERFACE; do
