@@ -119,7 +119,7 @@ config_select_mode_func() {
   fi
   echo "Selected mode: $MODE"
 
-  sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" $LISTFILE
+  sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" $CONFFILE
 }
 
 config_local_interface_func() {
