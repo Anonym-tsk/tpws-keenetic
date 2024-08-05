@@ -116,7 +116,7 @@ config_select_mode_func() {
   fi
   echo "Selected mode: $MODE"
 
-  sed -i 's/INPUT_EXTRA_ARGS/'$EXTRA_ARGS'/' $CONFFILE
+  sed -i "s/INPUT_EXTRA_ARGS/$EXTRA_ARGS/" $CONFFILE
 }
 
 config_local_interface_func() {
@@ -130,5 +130,5 @@ config_local_interface_func() {
   fi
   echo "Selected interface: $BIND_IFACE"
 
-  sed -i 's/INPUT_LOCAL_INTERFACE/'$BIND_IFACE'/' $CONFFILE
+  sed -i "s/INPUT_LOCAL_INTERFACE/$BIND_IFACE/" $CONFFILE
 }
