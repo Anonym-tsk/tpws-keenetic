@@ -46,7 +46,7 @@ check_old_config_func() {
 install_packages_func() {
   opkg update
   opkg upgrade busybox
-  opkg install iptables wget
+  opkg install iptables curl
 }
 
 config_copy_files_func() {
@@ -75,7 +75,7 @@ config_select_arch_func() {
   fi
 
   echo "Selected architecture: $ARCH"
-  wget -N "$TPWS_URL" -O "$TPWS_BIN"
+  curl -L "$TPWS_URL" -o "$TPWS_BIN"
   chmod +x $TPWS_BIN
 }
 
