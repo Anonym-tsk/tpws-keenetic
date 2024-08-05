@@ -6,9 +6,6 @@ TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
 
-ABSOLUTE_FILENAME=`readlink -f "$0"`
-HOME_FOLDER=`dirname "$ABSOLUTE_FILENAME"`
-
 stop_func() {
   if [ -f "$INIT_SCRIPT" ]; then
     $INIT_SCRIPT stop
