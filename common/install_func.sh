@@ -18,6 +18,11 @@ start_func(){
   fi
 }
 
+show_interfaces_func() {
+  echo -e "\n----------------------"
+  ip addr show | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $(NF), $2}'
+}
+
 read_yes_or_abort_func() {
   read yn
   case $yn in
@@ -30,14 +35,12 @@ read_yes_or_abort_func() {
 }
 
 begin_install_func() {
-  echo ""
-  echo "Begin install? y/N"
+  echo -e "\nBegin install? y/N"
   read_yes_or_abort_func
 }
 
 begin_uninstall_func() {
-  echo ""
-  echo "Begin uninstall? y/N"
+  echo -e "\nBegin uninstall? y/N"
   read_yes_or_abort_func
 }
 
@@ -51,7 +54,7 @@ remove_all_files_func() {
 
 check_old_config_func() {
   if [ -f "$CONFFILE" ]; then
-    echo "Old config file found: $CONFFILE. It will be overwritten. Continue? y/N"
+    echo -e "\nOld config file found: $CONFFILE. It will be overwritten. Continue? y/N"
     read_yes_or_abort_func
   fi
 }
@@ -75,8 +78,10 @@ config_copy_files_func() {
 
 config_select_arch_func() {
   if [ -z "$ARCH" ]; then
-    echo ""
-    echo "Select the router architecture: mips, mipsel (default), aarch64"
+    echo -e "\nSelect the router architecture: mipsel (default), mips, aarch64"
+    echo "  mipsel  - KN-1010/1011, KN-1810, KN-1910/1912, KN-2310, KN-2311, KN-2610, KN-2910, KN-3810"
+    echo "  mips    - KN-2410, KN-2510, KN-2010, KN-2012, KN-2110, KN-2112, KN-3610"
+    echo "  aarch64 - KN-2710, KN-1811"
     read ARCH
   fi
 
@@ -96,8 +101,10 @@ config_select_arch_func() {
 
 config_select_mode_func() {
   if [ -z "$MODE" ]; then
-    echo ""
-    echo "Select working mode: auto (default), list, all"
+    echo -e "\nSelect working mode: auto (default), list, all"
+    echo "  auto - automatically detects blocked resources and adds them to the list"
+    echo "  list - applies rules only to domains in the list $LISTFILE"
+    echo "  all  - applies rules to all traffic"
     read MODE
   fi
 
@@ -114,8 +121,7 @@ config_select_mode_func() {
 
 config_local_interface_func() {
   if [ -z "$BIND_IFACE" ]; then
-    echo ""
-    echo "Enter the local interface name from the list above, e.g. br0 (default) or nwg0"
+    echo -e "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"
     echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
     read BIND_IFACE
   fi

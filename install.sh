@@ -24,6 +24,7 @@ config_copy_files_func
 config_select_arch_func
 
 # Setup local interface
+show_interfaces_func
 config_local_interface_func
 
 # Setup working mode
