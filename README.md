@@ -1,17 +1,57 @@
 # tpws-keenetic
 
-### Automatic installation
+Скрипты для установки `tpws` на маршрутизаторы с поддержкой `opkg`.
+
+Предназначено для роутеров Keenetic с установленным на них entware, а так же для любой системы с opkg пакетами, у которых система расположена в каталоге /opt/.
+
+Проверено на Keenetic Giga KN-1011.
+
+### Что это?
+
+`tpws` - утилита для модификации TCP пакетов на уровне потока, работает как transparent proxy.
+
+Почитать подробнее можно на [странице авторов](https://github.com/bol-van/zapret) (ищите по ключевому слову `tpws`).
+
+### Подготовка
+
+(опционально) Рекомендуется отключить провайдерский DNS на маршрутизаторе и [настроить использование DoT/DoH](https://help.keenetic.com/hc/ru/articles/360007687159).
+
+Установить entware на маршрутизатор по инструкции [на встроенную память роутера](https://help.keenetic.com/hc/ru/articles/360021888880) или [на USB-накопитель](https://help.keenetic.com/hc/ru/articles/360021214160).
+
+Все дальнейшие команды выполняются не в cli роутера, а **в среде entware**.
+
+### Автоматическая установка (рекомендуется)
+
 ```
 opkg install curl
 /bin/sh -c "$(curl -fsSL https://github.com/Anonym-tsk/tpws-keenetic/raw/master/netinstall.sh)"
 ```
 
-### Automatic uninstallation
+**Следуйте инструкции установщика:**
+
+1. Выберите архитектуру маршрутизатора `mipsel`, `mips` или `aarch64`
+> Для моделей Giga (KN-1010/1011), Ultra (KN-1810), Viva (KN-1910/1912), Hero 4G (KN-2310), Hero 4G+ (KN-2311), Giant (KN-2610), Skipper 4G (KN-2910), Hopper (KN-3810) используйте архитектуру `mipsel`
+>
+> Для моделей Giga SE (KN-2410), Ultra SE (KN-2510), DSL (KN-2010), Launcher DSL (KN-2012), Duo (KN-2110), Skipper DSL (KN-2112), Hopper DSL (KN-3610) используйте архитектуру `mips`
+>
+> Для моделей Peak (KN-2710), Ultra (KN-1811) используйте архитектуру `aarch64`
+2. Введите локальный сетевой интерфейс, обычно это `br0`
+> Можно указать несколько интерфейсов через пробел (`br0 nwg0`), например, чтобы обрабатывать трафик от клиентов, подключенных через VPN или в гостевой сети
+3. Выберите режим работы `auto`, `list` или `all`
+> В режиме `list` будут обрабатываться только домены из файла `/opt/etc/tpws/user.list` (один домен на строку)
+>
+> В режиме `auto` кроме этого будут автоматически определяться недоступные домены и добавляться в список, по которому `tpws` обрабатывает трафик. Домен будет добавлен, если за 60 секунд будет 3 раза определено, что ресурс недоступен
+>
+> В режиме `all` будет обрабатываться весь трафик
+
+##### Автоматическое удаление
+
 ```
 /bin/sh -c "$(curl -fsSL https://github.com/Anonym-tsk/tpws-keenetic/raw/master/netuninstall.sh)"
 ```
 
-### Manual installation
+### Ручная установка (не рекомендуется, если entware установлен во внутреннюю память)
+
 ```
 opkg install git git-http curl
 git clone https://github.com/Anonym-tsk/tpws-keenetic.git --depth 1
@@ -19,8 +59,21 @@ chmod +x ./tpws-keenetic/*.sh
 ./tpws-keenetic/install.sh
 ```
 
-### Manual uninstallation
+##### Удаление
+
 ```
 ./tpws-keenetic/uninstall.sh
 ```
 
+### Полезное
+
+1. Конфиг-файл `/opt/etc/tpws/tpws.conf`
+2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|status}`
+3. Вручную добавить домены в список можно в файле `/opt/etc/tpws/user.list`
+4. Автоматически добавленные домены `/opt/etc/tpws/auto.list`
+5. Проверить, что нужные правила добавлены в таблицу маршрутизации `iptables-save | grep 999`
+> Вы должны увидеть похожие строки (по две на каждый выбранный сетевой интерфейс)
+> ```
+> -A PREROUTING -i br0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 999
+> -A PREROUTING -i br0 -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 999
+> ```
