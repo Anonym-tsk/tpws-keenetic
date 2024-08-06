@@ -103,13 +103,13 @@ config_select_arch_func() {
     read ARCH
   fi
 
-  ARCH="mipsel"
-  TPWS_URL="https://raw.githubusercontent.com/bol-van/zapret/master/binaries/mips32r1-lsb/tpws"
-
   if [ "$ARCH" == "mips" ]; then
     TPWS_URL="https://raw.githubusercontent.com/bol-van/zapret/master/binaries/mips32r1-msb/tpws"
   elif [ "$ARCH" == "aarch64" ]; then
     TPWS_URL="https://raw.githubusercontent.com/bol-van/zapret/master/binaries/aarch64/tpws"
+  else
+    ARCH="mipsel"
+    TPWS_URL="https://raw.githubusercontent.com/bol-van/zapret/master/binaries/mips32r1-lsb/tpws"
   fi
 
   echo "Selected architecture: $ARCH"
