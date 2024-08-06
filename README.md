@@ -6,6 +6,11 @@ opkg install curl
 /bin/sh -c "$(curl -fsSL https://github.com/Anonym-tsk/tpws-keenetic/raw/master/netinstall.sh)"
 ```
 
+### Automatic uninstallation
+```
+/bin/sh -c "$(curl -fsSL https://github.com/Anonym-tsk/tpws-keenetic/raw/master/netuninstall.sh)"
+```
+
 ### Manual installation
 ```
 opkg install git git-http curl
@@ -14,7 +19,7 @@ chmod +x ./tpws-keenetic/*.sh
 ./tpws-keenetic/install.sh
 ```
 
-### Uninstallation
+### Manual uninstallation
 ```
 ./tpws-keenetic/uninstall.sh
 ```
