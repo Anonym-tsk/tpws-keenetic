@@ -78,3 +78,9 @@ chmod +x ./tpws-keenetic/*.sh
 > -A PREROUTING -i br0 -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 999
 > -A PREROUTING -i br0 -p udp -m udp --dport 443 -j REDIRECT --to-ports 999
 > ```
+6. Если ничего не работает...
+> Если ваше устройство поддерживает аппаратное ускорение (flow offloading, hardware nat, hardware acceleration), то iptables могут не работать.
+> При включенном offloading пакет не проходит по обычному пути netfilter.
+> Необходимо или его отключить, или выборочно им управлять.
+>
+> На Keenetic можно попробовать выключить или наоборот включить [сетевой ускоритель](https://help.keenetic.com/hc/ru/articles/214470905)
