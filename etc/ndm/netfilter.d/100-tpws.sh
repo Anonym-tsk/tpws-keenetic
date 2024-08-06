@@ -2,7 +2,7 @@
 
 . /opt/etc/tpws.conf
 
-if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
   exit
 fi
 [ "$type" == "ip6tables" ] && exit
