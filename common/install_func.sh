@@ -1,8 +1,9 @@
 #!/bin/sh
 
-CONFFILE=/opt/etc/tpws/tpws.conf
-LISTFILE=/opt/etc/tpws/user.list
-LISTAUTOFILE=/opt/etc/tpws/auto.list
+CONFDIR=/opt/etc/tpws
+CONFFILE=$CONFDIR/tpws.conf
+LISTFILE=$CONFDIR/user.list
+LISTAUTOFILE=$CONFDIR/auto.list
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -84,7 +85,7 @@ config_copy_files_func() {
   cp -f $HOME_FOLDER/etc/ndm/netfilter.d/100-tpws.sh $NETFILTER_SCRIPT
   chmod +x $NETFILTER_SCRIPT
 
-  mkdir -p tpws-keenetic/etc/tpws
+  mkdir -p $CONFDIR
   cp -f $HOME_FOLDER/etc/tpws/tpws.conf $CONFFILE
 }
 
