@@ -71,7 +71,7 @@ chmod +x ./tpws-keenetic/*.sh
 2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|status}`
 3. Вручную добавить домены в список можно в файле `/opt/etc/tpws/user.list`
 4. Автоматически добавленные домены `/opt/etc/tpws/auto.list`
-5. Проверить, что нужные правила добавлены в таблицу маршрутизации `iptables-save | grep 999`
+5. Проверить, что нужные правила добавлены в таблицу маршрутизации `iptables-save | grep "to-ports 999$"`
 > Вы должны увидеть похожие строки (по 3 на каждый выбранный сетевой интерфейс)
 > ```
 > -A PREROUTING -i br0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 999

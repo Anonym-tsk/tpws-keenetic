@@ -19,7 +19,7 @@ start() {
 
   $TPWS_BIN --daemon $BIND_ADDR --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
 
-  if [ -z "$(iptables-save 2>/dev/null | grep $BIND_PORT)" ]; then
+  if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
       iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
@@ -31,7 +31,7 @@ start() {
 }
 
 stop() {
-  if [ -n "$(iptables-save 2>/dev/null | grep $BIND_PORT)" ]; then
+  if [ -n "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
