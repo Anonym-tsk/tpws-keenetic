@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /opt/etc/tpws.conf
+. /opt/etc/tpws/tpws.conf
 
 TPWS_BIN=/opt/usr/bin/tpws
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /opt/etc/tpws.conf
+. /opt/etc/tpws/tpws.conf
 
 if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
   exit

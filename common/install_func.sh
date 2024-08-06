@@ -1,8 +1,8 @@
 #!/bin/sh
 
-CONFFILE=/opt/etc/tpws.conf
-LISTFILE=/opt/etc/tpws.list
-LISTAUTOFILE=/opt/etc/tpws-auto.list
+CONFFILE=/opt/etc/tpws/tpws.conf
+LISTFILE=/opt/etc/tpws/user.list
+LISTAUTOFILE=/opt/etc/tpws/auto.list
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -84,7 +84,8 @@ config_copy_files_func() {
   cp -f $HOME_FOLDER/etc/ndm/netfilter.d/100-tpws.sh $NETFILTER_SCRIPT
   chmod +x $NETFILTER_SCRIPT
 
-  cp -f $HOME_FOLDER/etc/tpws.conf $CONFFILE
+  mkdir -p tpws-keenetic/etc/tpws
+  cp -f $HOME_FOLDER/etc/tpws/tpws.conf $CONFFILE
 }
 
 config_copy_list_func() {
@@ -93,13 +94,13 @@ config_copy_list_func() {
     read yn
     case $yn in
       [Yy]* )
-        cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
-        cp -f $HOME_FOLDER/etc/tpws-auto.list $LISTAUTOFILE
+        cp -f $HOME_FOLDER/etc/tpws/user.list $LISTFILE
+        cp -f $HOME_FOLDER/etc/tpws/auto.list $LISTAUTOFILE
         ;;
     esac
   else
-    cp -f $HOME_FOLDER/etc/tpws.list $LISTFILE
-    cp -f $HOME_FOLDER/etc/tpws-auto.list $LISTAUTOFILE
+    cp -f $HOME_FOLDER/etc/tpws/user.list $LISTFILE
+    cp -f $HOME_FOLDER/etc/tpws/auto.list $LISTAUTOFILE
   fi
 }
 
