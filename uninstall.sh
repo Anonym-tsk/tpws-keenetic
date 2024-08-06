@@ -14,6 +14,9 @@ stop_func
 # Remove all data
 remove_all_files_func
 
+# Remove lists
+remove_list_func
+
 echo "Unnstallation successful"
 
 exit 0

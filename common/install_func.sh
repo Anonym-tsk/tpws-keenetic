@@ -48,11 +48,20 @@ begin_uninstall_func() {
 
 remove_all_files_func() {
   rm -f $CONFFILE
-  rm -f $LISTFILE
-  rm -f $LISTAUTOFILE
   rm -f $TPWS_BIN
   rm -f $INIT_SCRIPT
   rm -f $NETFILTER_SCRIPT
+}
+
+remove_list_func() {
+  echo -e "\nRemove hosts list? y/N"
+  read yn
+  case $yn in
+    [Yy]* )
+      rm -f $LISTFILE
+      rm -f $LISTAUTOFILE
+      ;;
+  esac
 }
 
 check_old_config_func() {
@@ -80,7 +89,7 @@ config_copy_files_func() {
 
 config_copy_list_func() {
   if [ -f "$LISTFILE" ]; then
-    echo -e "\nOld list file found: $LISTFILE. Overwrite? y/N"
+    echo -e "\nOld hosts list file found: $LISTFILE. Overwrite? y/N"
     read yn
     case $yn in
       [Yy]* )
