@@ -124,7 +124,7 @@ config_select_arch_func() {
   fi
 
   echo "Selected architecture: $ARCH"
-  curl -L "$TPWS_URL" -o "$TPWS_BIN"
+  curl -SL# "$TPWS_URL" -o "$TPWS_BIN"
   chmod +x $TPWS_BIN
 }
 
