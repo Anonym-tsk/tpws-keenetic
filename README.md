@@ -4,7 +4,12 @@
 
 Предназначено для роутеров Keenetic с установленным на них entware, а так же для любой системы с opkg пакетами, у которых система расположена в каталоге /opt/.
 
-Проверено на Keenetic Giga KN-1011.
+Проверено на маршрутизаторах:
+
+- Keenetic Giga (KN-1011)
+- Keenetic Ultra (KN-1811)
+- Keenetic Extra (KN-1710)
+- ZyXEL Keenetic Giga II
 
 ### Что это?
 
