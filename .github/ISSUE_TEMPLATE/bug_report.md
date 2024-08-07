@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG]"
+title: "[BUG] "
 labels: ''
 assignees: ''
 
@@ -14,7 +14,7 @@ assignees: ''
 Укажите полную модель роутера и прошивку
 
 **Выполните команды и приложите их вывод**
-`cat /opt/etc/tpws/tpws.conf``
+`cat /opt/etc/tpws/tpws.conf`
 ```
 > 
 ```
