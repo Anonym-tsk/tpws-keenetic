@@ -11,6 +11,8 @@
 - Keenetic Extra (KN-1710)
 - ZyXEL Keenetic Giga II
 - SmartBOX Turbo+ с прошивкой Padavan
+- Xiaomi Mi-router 3 с прошивкой Padavan
+- Xiaomi Mi Router PRO R3P с прошивкой Keenetic OS
 
 ### Что это?
 
