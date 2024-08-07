@@ -10,14 +10,13 @@ start() {
     return 1
   fi
 
-  BIND_ADDR=""
+  BIND_IFACE=""
   for IFACE in $LOCAL_INTERFACE; do
-    IP=$(ip -4 addr show $IFACE | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $2}')
-    BIND_ADDR="$BIND_ADDR --bind-addr $IP"
-    echo "Bind address for interface $IFACE: $IP"
+    BIND_IFACE="$BIND_IFACE --bind-iface4=$IFACE"
+    echo "Bind to local interface: $IFACE"
   done
 
-  $TPWS_BIN --daemon $BIND_ADDR --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
+  $TPWS_BIN --daemon $BIND_IFACE --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
 
   if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
