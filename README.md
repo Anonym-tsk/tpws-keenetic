@@ -10,6 +10,7 @@
 - Keenetic Ultra (KN-1811)
 - Keenetic Extra (KN-1710)
 - ZyXEL Keenetic Giga II
+- SmartBOX Turbo+ с прошивкой Padavan
 
 ### Что это?
 
