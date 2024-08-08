@@ -18,6 +18,10 @@
 - Xiaomi Mi-router 3 с прошивкой Padavan
 - Xiaomi Mi Router PRO R3P с прошивкой Keenetic OS
 
+Списки проверенного оборудования собираем в [отдельной теме](https://github.com/Anonym-tsk/tpws-keenetic/discussions/6).
+
+Поделиться опытом можно в разделе [Discussions](https://github.com/Anonym-tsk/tpws-keenetic/discussions).
+
 ### Что это?
 
 `tpws` - утилита для модификации TCP пакетов на уровне потока, работает как transparent proxy.
