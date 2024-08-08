@@ -24,16 +24,16 @@ log() {
 
     case "$LEVEL" in
         INFO)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Green" "$LEVEL" "$FontColor_Suffix" "$MSG"
+            printf "[${TIMESTAMP}] [${FontColor_Green}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}"
             ;;
         WARN)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Yellow" "$LEVEL" "$FontColor_Suffix" "$MSG"
+            printf "[${TIMESTAMP}] [${FontColor_Yellow}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}"
             ;;
         ERROR)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Red" "$LEVEL" "$FontColor_Suffix" "$MSG" >&2
+            printf "[${TIMESTAMP}] [${FontColor_Red}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}" >&2
             ;;
         *)
-            printf "[%s] %s\n" "$TIMESTAMP" "$MSG"
+            printf "[${TIMESTAMP}] %s\n" "${MSG}"
             ;;
     esac
 }
@@ -58,7 +58,7 @@ start_func() {
 
 show_interfaces_func() {
     log INFO "Displaying network interfaces"
-    echo -e "\n----------------------"
+    printf "\n----------------------"
     ip addr show | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $(NF), $2}'
 }
 
@@ -76,13 +76,13 @@ read_yes_or_abort_func() {
 
 begin_install_func() {
     log INFO "Beginning installation"
-    echo -e "\nBegin install? y/N"
+    printf "\nBegin install? y/N"
     read_yes_or_abort_func
 }
 
 begin_uninstall_func() {
     log INFO "Beginning uninstallation"
-    echo -e "\nBegin uninstall? y/N"
+    printf "\nBegin uninstall? y/N"
     read_yes_or_abort_func
 }
 
@@ -96,7 +96,7 @@ remove_all_files_func() {
 
 remove_list_func() {
     log INFO "Removing hosts list"
-    echo -e "\nRemove hosts list? y/N"
+    printf "\nRemove hosts list? y/N"
     read -r yn
     case $yn in
         [Yy]* )
@@ -110,7 +110,7 @@ remove_list_func() {
 check_old_config_func() {
     if [ -f "$CONFFILE" ]; then
         log WARN "Old config file found: $CONFFILE. It will be overwritten."
-        echo -e "\nOld config file found: $CONFFILE. It will be overwritten. Continue? y/N"
+        printf "\nOld config file found: $CONFFILE. It will be overwritten. Continue? y/N"
         read_yes_or_abort_func
     fi
 }
@@ -137,7 +137,7 @@ config_copy_files_func() {
 config_copy_list_func() {
     if [ -f "$LISTFILE" ]; then
         log INFO "Old hosts list file found: $LISTFILE. Overwriting it."
-        echo -e "\nOld hosts list file found: $LISTFILE. Overwrite? y/N"
+        printf "\nOld hosts list file found: $LISTFILE. Overwrite? y/N"
         read -r yn
         case $yn in
             [Yy]* )
@@ -156,7 +156,7 @@ config_copy_list_func() {
 config_select_arch_func() {
     if [ -z "$ARCH" ]; then
         log INFO "Selecting router architecture"
-        echo -e "\nSelect the router architecture: mipsel (default), mips, aarch64"
+        printf "\nSelect the router architecture: mipsel (default), mips, aarch64"
         echo "  mipsel  - KN-1010/1011, KN-1810, KN-1910/1912, KN-2310, KN-2311, KN-2610, KN-2910, KN-3810"
         echo "  mips    - KN-2410, KN-2510, KN-2010, KN-2012, KN-2110, KN-2112, KN-3610"
         echo "  aarch64 - KN-2710, KN-1811"
@@ -184,7 +184,7 @@ config_select_arch_func() {
 config_select_mode_func() {
     if [ -z "$MODE" ]; then
         log INFO "Selecting working mode"
-        echo -e "\nSelect working mode: auto (default), list, all"
+        printf "\nSelect working mode: auto (default), list, all"
         echo "  auto - automatically detects blocked resources and adds them to the list"
         echo "  list - applies rules only to domains in the list $LISTFILE"
         echo "  all  - applies rules to all traffic except domains from list $LISTEXCLUDEFILE"
@@ -211,7 +211,7 @@ config_select_mode_func() {
 config_local_interface_func() {
     if [ -z "$BIND_IFACE" ]; then
         log INFO "Selecting local interface"
-        echo -e "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"
+        printf "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"
         echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
         read -r BIND_IFACE
     fi

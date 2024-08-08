@@ -14,18 +14,18 @@ log() {
     MSG="$2"
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
-    case "$LEVEL" in
+    case "${LEVEL}" in
         INFO)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Green" "$LEVEL" "$FontColor_Suffix" "$MSG" | tee -a "$LOGFILE"
+            printf "[${TIMESTAMP}] [${FontColor_Green}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}" | tee -a "$LOGFILE"
             ;;
         WARN)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Yellow" "$LEVEL" "$FontColor_Suffix" "$MSG" | tee -a "$LOGFILE"
+            printf "[${TIMESTAMP}] [${FontColor_Yellow}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}" | tee -a "$LOGFILE"
             ;;
         ERROR)
-            printf "[%s] [%s%s%s] %s\n" "$TIMESTAMP" "$FontColor_Red" "$LEVEL" "$FontColor_Suffix" "$MSG" | tee -a "$LOGFILE" >&2
+            printf "[${TIMESTAMP}] [${FontColor_Red}${LEVEL}${FontColor_Suffix}] %s\n" "${MSG}" | tee -a "$LOGFILE" >&2
             ;;
         *)
-            printf "[%s] %s\n" "$TIMESTAMP" "$MSG" | tee -a "$LOGFILE"
+            printf "[${TIMESTAMP}] %s\n" "${MSG}" | tee -a "$LOGFILE"
             ;;
     esac
 }
