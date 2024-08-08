@@ -4,6 +4,7 @@ CONFDIR=/opt/etc/tpws
 CONFFILE=$CONFDIR/tpws.conf
 LISTFILE=$CONFDIR/user.list
 LISTAUTOFILE=$CONFDIR/auto.list
+LISTEXCLUDEFILE=$CONFDIR/exclude.list
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -61,6 +62,7 @@ remove_list_func() {
     [Yy]* )
       rm -f $LISTFILE
       rm -f $LISTAUTOFILE
+      rm -f $LISTEXCLUDEFILE
       ;;
   esac
 }
@@ -97,11 +99,13 @@ config_copy_list_func() {
       [Yy]* )
         cp -f $HOME_FOLDER/etc/tpws/user.list $LISTFILE
         cp -f $HOME_FOLDER/etc/tpws/auto.list $LISTAUTOFILE
+        cp -f $HOME_FOLDER/etc/tpws/exclude.list $LISTEXCLUDEFILE
         ;;
     esac
   else
     cp -f $HOME_FOLDER/etc/tpws/user.list $LISTFILE
     cp -f $HOME_FOLDER/etc/tpws/auto.list $LISTAUTOFILE
+    cp -f $HOME_FOLDER/etc/tpws/exclude.list $LISTEXCLUDEFILE
   fi
 }
 
@@ -133,17 +137,17 @@ config_select_mode_func() {
     echo -e "\nSelect working mode: auto (default), list, all"
     echo "  auto - automatically detects blocked resources and adds them to the list"
     echo "  list - applies rules only to domains in the list $LISTFILE"
-    echo "  all  - applies rules to all traffic"
+    echo "  all  - applies rules to all traffic except domains from list $LISTEXCLUDEFILE"
     read MODE
   fi
 
   if [ "$MODE" == "list" ]; then
     EXTRA_ARGS="--hostlist=$LISTFILE"
   elif [ "$MODE" == "all" ]; then
-    EXTRA_ARGS=""
+    EXTRA_ARGS="--hostlist-exclude=$LISTEXCLUDEFILE"
   else
     MODE="auto"
-    EXTRA_ARGS="--hostlist=$LISTFILE --hostlist-auto=$LISTAUTOFILE"
+    EXTRA_ARGS="--hostlist=$LISTFILE --hostlist-auto=$LISTAUTOFILE --hostlist-exclude=$LISTEXCLUDEFILE"
   fi
   echo "Selected mode: $MODE"
 
