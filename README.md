@@ -10,6 +10,7 @@
 - Keenetic Ultra (KN-1811)
 - Keenetic Extra (KN-1710)
 - Keenetic Hopper (KN-3810)
+- Keenetic Hopper DSL (KN-3610)
 - Keenetic Viva (KN-1910)
 - ZyXEL Keenetic Giga II
 - ZyXEL Keenetic Ultra II
@@ -17,6 +18,7 @@
 - SmartBOX Turbo+ с прошивкой Padavan
 - Xiaomi Mi-router 3 с прошивкой Padavan
 - Xiaomi Mi Router PRO R3P с прошивкой Keenetic OS
+- Xiaomi Mi WiFi Router 3G
 
 Списки проверенного оборудования собираем в [отдельной теме](https://github.com/Anonym-tsk/tpws-keenetic/discussions/6).
 
