@@ -12,6 +12,7 @@
 - Keenetic Hopper (KN-3810)
 - ZyXEL Keenetic Giga II
 - ZyXEL Keenetic Ultra II
+- ZyXEL Keenetic Ultra
 - SmartBOX Turbo+ с прошивкой Padavan
 - Xiaomi Mi-router 3 с прошивкой Padavan
 - Xiaomi Mi Router PRO R3P с прошивкой Keenetic OS
