@@ -5,6 +5,7 @@ CONFFILE=$CONFDIR/tpws.conf
 LISTFILE=$CONFDIR/user.list
 LISTAUTOFILE=$CONFDIR/auto.list
 LISTEXCLUDEFILE=$CONFDIR/exclude.list
+LISTLOG=/opt/var/log/tpws.log
 TPWS_BIN=/opt/usr/bin/tpws
 INIT_SCRIPT=/opt/etc/init.d/S51tpws
 NETFILTER_SCRIPT=/opt/etc/ndm/netfilter.d/100-tpws.sh
@@ -147,7 +148,7 @@ config_select_mode_func() {
     EXTRA_ARGS="--hostlist-exclude=$LISTEXCLUDEFILE"
   else
     MODE="auto"
-    EXTRA_ARGS="--hostlist=$LISTFILE --hostlist-auto=$LISTAUTOFILE --hostlist-exclude=$LISTEXCLUDEFILE"
+    EXTRA_ARGS="--hostlist=$LISTFILE --hostlist-auto=$LISTAUTOFILE --hostlist-auto-debug=$LISTLOG --hostlist-exclude=$LISTEXCLUDEFILE"
   fi
   echo "Selected mode: $MODE"
 
