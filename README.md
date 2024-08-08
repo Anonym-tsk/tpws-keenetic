@@ -10,6 +10,7 @@
 - Keenetic Ultra (KN-1811)
 - Keenetic Extra (KN-1710)
 - Keenetic Hopper (KN-3810)
+- Keenetic Viva (KN-1910)
 - ZyXEL Keenetic Giga II
 - ZyXEL Keenetic Ultra II
 - ZyXEL Keenetic Ultra
