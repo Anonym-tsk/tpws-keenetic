@@ -156,7 +156,7 @@ config_select_mode_func() {
   sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" $CONFFILE
 }
 
-config_local_interface_func() {
+config_interface_func() {
   if [ -z "$BIND_IFACE" ]; then
     echo -e "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"
     echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
