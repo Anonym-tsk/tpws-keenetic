@@ -47,6 +47,16 @@ stop() {
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
 }
 
+reload() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo 'Service TPWS is not running' >&2
+    return 1
+  fi
+
+  echo 'Reloading TPWS service...'
+  kill -1 $(cat "$PIDFILE")
+}
+
 status() {
   if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
     echo 'Service TPWS is running'
@@ -69,6 +79,9 @@ case "$1" in
     stop
     start
     ;;
+  reload)
+    reload
+    ;;
   *)
-    echo "Usage: $0 {start|stop|restart|status}"
+    echo "Usage: $0 {start|stop|restart|reload|status}"
 esac
