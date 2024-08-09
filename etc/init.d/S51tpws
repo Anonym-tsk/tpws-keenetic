@@ -16,7 +16,7 @@ start() {
     echo "Bind to local interface: $IFACE"
   done
 
-  $TPWS_BIN --daemon $BIND_IFACE --port $BIND_PORT --pidfile $PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
+  $TPWS_BIN --daemon $BIND_IFACE --port=$BIND_PORT --pidfile=$PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
   firewall_start
 
   echo 'Started TPWS service'
