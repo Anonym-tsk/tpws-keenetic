@@ -92,7 +92,7 @@ remove_all_files_func() {
     rm -f "$TPWS_BIN"
     rm -f "$INIT_SCRIPT"
     rm -f "$NETFILTER_SCRIPT"
-    rm -f $LISTLOG
+    rm -f "$LISTLOG"
 }
 
 remove_list_func() {
