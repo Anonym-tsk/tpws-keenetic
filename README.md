@@ -10,12 +10,19 @@
 - Keenetic Ultra (KN-1811)
 - Keenetic Extra (KN-1710)
 - Keenetic Hopper (KN-3810)
+- Keenetic Hopper DSL (KN-3610)
+- Keenetic Viva (KN-1910)
 - ZyXEL Keenetic Giga II
 - ZyXEL Keenetic Ultra II
 - ZyXEL Keenetic Ultra
 - SmartBOX Turbo+ с прошивкой Padavan
 - Xiaomi Mi-router 3 с прошивкой Padavan
 - Xiaomi Mi Router PRO R3P с прошивкой Keenetic OS
+- Xiaomi Mi WiFi Router 3G
+
+Списки проверенного оборудования собираем в [отдельной теме](https://github.com/Anonym-tsk/tpws-keenetic/discussions/6).
+
+Поделиться опытом можно в разделе [Discussions](https://github.com/Anonym-tsk/tpws-keenetic/discussions).
 
 ### Что это?
 
@@ -79,7 +86,7 @@ chmod +x ./tpws-keenetic/*.sh
 ### Полезное
 
 1. Конфиг-файл `/opt/etc/tpws/tpws.conf`
-2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|status}`
+2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|reload|status}`
 3. Вручную добавить домены в список можно в файле `/opt/etc/tpws/user.list`
 4. Автоматически добавленные домены `/opt/etc/tpws/auto.list`
 5. Лог автоматически добавленных доменов `/opt/var/log/tpws.log`

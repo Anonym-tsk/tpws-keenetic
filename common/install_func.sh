@@ -92,6 +92,7 @@ remove_all_files_func() {
     rm -f "$TPWS_BIN"
     rm -f "$INIT_SCRIPT"
     rm -f "$NETFILTER_SCRIPT"
+    rm -f $LISTLOG
 }
 
 remove_list_func() {
@@ -208,7 +209,7 @@ config_select_mode_func() {
     sed -i "s#INPUT_EXTRA_ARGS#$EXTRA_ARGS#" "$CONFFILE"
 }
 
-config_local_interface_func() {
+config_interface_func() {
     if [ -z "$BIND_IFACE" ]; then
         log INFO "Selecting local interface"
         printf "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"

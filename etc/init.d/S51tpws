@@ -43,15 +43,8 @@ start() {
     done
 
     log INFO "Starting TPWS service with command"
-    if $TPWS_BIN --daemon $BIND_IFACE --port "$BIND_PORT" --pidfile "$PIDFILE" $TPWS_ARGS $TPWS_EXTRA_ARGS >>"$LOGFILE" 2>&1; then
-        if ! iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
-            log WARN "iptables rules not found. Adding..."
-            for IFACE in $LOCAL_INTERFACE; do
-                iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
-                iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
-                iptables -t nat -A PREROUTING -i "$IFACE" -p udp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
-            done
-        fi
+    if $TPWS_BIN --daemon="$BIND_IFACE" --port="$BIND_PORT" --pidfile="$PIDFILE" $TPWS_ARGS $TPWS_EXTRA_ARGS >>"$LOGFILE" 2>&1; then
+        firewall_start
         log INFO "Started TPWS service"
     else
         log ERROR "Failed to start TPWS service"
@@ -59,14 +52,7 @@ start() {
 }
 
 stop() {
-    if iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
-        log WARN "Dropping iptables rules before stopping TPWS service..."
-        for IFACE in $LOCAL_INTERFACE; do
-            iptables -t nat -D PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
-            iptables -t nat -D PREROUTING -i "$IFACE" -p tcp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
-            iptables -t nat -D PREROUTING -i "$IFACE" -p udp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
-        done
-    fi
+    firewall_stop
 
     if [ ! -f "$PIDFILE" ] || ! kill -0 "$(cat "$PIDFILE" 2>/dev/null)"; then
         log ERROR "Service TPWS is not running"
@@ -79,6 +65,38 @@ stop() {
         log INFO "Stopped TPWS service"
     else
         log ERROR "Failed to stop TPWS service"
+    fi
+}
+
+reload() {
+    if [ ! -f "$PIDFILE" ] || ! kill -0 "$(cat "$PIDFILE" 2>/dev/null)"; then
+        log ERROR "Service TPWS is not running"
+        return 1
+    fi
+
+    log WARN 'Reloading TPWS service...'
+    kill -1 $(cat "$PIDFILE")
+}
+
+firewall_start() {
+    if ! iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
+        log WARN "iptables rules not found. Adding..."
+        for IFACE in $LOCAL_INTERFACE; do
+            iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
+            iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
+            iptables -t nat -A PREROUTING -i "$IFACE" -p udp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
+        done
+    fi
+}
+
+firewall_stop() {
+    if iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
+        log WARN "Dropping iptables rules before stopping TPWS service..."
+        for IFACE in $LOCAL_INTERFACE; do
+            iptables -t nat -D PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
+            iptables -t nat -D PREROUTING -i "$IFACE" -p tcp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
+            iptables -t nat -D PREROUTING -i "$IFACE" -p udp --dport 443 -j REDIRECT --to-port "$BIND_PORT"
+        done
     fi
 }
 
@@ -103,8 +121,14 @@ case "$1" in
     restart)
         stop && start
         ;;
-    *)
-        printf "Usage: %s {start|stop|restart|status}\n" "$0"
-        exit 1
-        ;;
+    reload)
+      reload
+      ;;
+    firewall)
+      firewall_start
+      ;;
+      *)
+      printf "Usage: %s {start|stop|restart|reload|status}\n" "$0"
+      exit 1
+      ;;
 esac
