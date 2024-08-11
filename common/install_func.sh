@@ -187,9 +187,10 @@ config_select_mode_func() {
     if [ -z "$MODE" ]; then
         log INFO "Selecting working mode"
         printf "\nSelect working mode: auto (default), list, all"
-        echo "  auto - automatically detects blocked resources and adds them to the list"
-        echo "  list - applies rules only to domains in the list $LISTFILE"
-        echo "  all  - applies rules to all traffic except domains from list $LISTEXCLUDEFILE"
+        printf "\auto - automatically detects blocked resources and adds them to the list"
+        printf "\list - applies rules only to domains in the list $LISTFILE"
+        printf "\all  - applies rules to all traffic except domains from list $LISTEXCLUDEFILE"
+        printf "\n"
         read -r MODE
     fi
 
@@ -214,7 +215,8 @@ config_interface_func() {
     if [ -z "$BIND_IFACE" ]; then
         log INFO "Selecting local interface"
         printf "\nEnter the local interface name from the list above, e.g. br0 (default) or nwg0"
-        echo "You can specify multiple interfaces separated by space, e.g. br0 nwg0"
+        printf "\nYou can specify multiple interfaces separated by space, e.g. br0 nwg0"
+        printf "\n"
         read -r BIND_IFACE
     fi
     if [ -z "$BIND_IFACE" ]; then
