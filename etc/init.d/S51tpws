@@ -43,7 +43,7 @@ start() {
     done
 
     log INFO "Starting TPWS service with command"
-    if $TPWS_BIN --daemon="$BIND_IFACE" --port="$BIND_PORT" --pidfile="$PIDFILE" $TPWS_ARGS $TPWS_EXTRA_ARGS >>"$LOGFILE" 2>&1; then
+    if $TPWS_BIN --daemon="$BIND_IFACE" --port="$BIND_PORT" --pidfile="$PIDFILE" "$TPWS_ARGS" "$TPWS_EXTRA_ARGS" >>"$LOGFILE" 2>&1; then
         firewall_start
         log INFO "Started TPWS service"
     else
@@ -75,7 +75,7 @@ reload() {
     fi
 
     log WARN 'Reloading TPWS service...'
-    kill -1 $(cat "$PIDFILE")
+    kill -1 "$(cat "$PIDFILE")"
 }
 
 firewall_start() {
