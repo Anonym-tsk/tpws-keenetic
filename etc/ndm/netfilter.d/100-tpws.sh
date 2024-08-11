@@ -5,7 +5,7 @@
 if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
   exit
 fi
-[ "$type" == "ip6tables" ] && exit
+
 [ "$table" != "nat" ] && exit
 
-/opt/etc/init.d/S51tpws firewall
+/opt/etc/init.d/S51tpws firewall-"$type"

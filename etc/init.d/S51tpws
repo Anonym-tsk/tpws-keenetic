@@ -45,12 +45,24 @@ reload() {
 }
 
 firewall_start() {
-  if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
-    for IFACE in $LOCAL_INTERFACE; do
-      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
-      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-    done
+  if [ "$1" == "v4" ] || [ -z "$1" ]; then
+    if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+      for IFACE in $LOCAL_INTERFACE; do
+        iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+        iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+        iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      done
+    fi
+  fi
+
+  if [ "$1" == "v6" ] || [ -z "$1" ]; then
+    if [ -z "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+      for IFACE in $LOCAL_INTERFACE; do
+        ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+        ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+        ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      done
+    fi
   fi
 }
 
@@ -60,6 +72,14 @@ firewall_stop() {
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
       iptables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
+  fi
+
+  if [ -n "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
     done
   fi
 }
@@ -89,8 +109,11 @@ case "$1" in
   reload)
     reload
     ;;
-  firewall)
-    firewall_start
+  firewall-iptables)
+    firewall_start v4
+    ;;
+  firewall-ip6tables)
+    firewall_start v6
     ;;
   *)
     echo "Usage: $0 {start|stop|restart|reload|status}"
