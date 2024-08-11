@@ -36,6 +36,6 @@ config_select_mode_func
 # Starting Services
 start_func
 
-lof INFO "Installation successful"
+log INFO "Installation successful"
 
 exit 0

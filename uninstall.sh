@@ -17,6 +17,6 @@ remove_all_files_func
 # Remove lists
 remove_list_func
 
-echo "Unnstallation successful"
+log INFO "Unnstallation successful"
 
 exit 0
