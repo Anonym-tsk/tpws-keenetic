@@ -1,7 +1,7 @@
 #!/bin/sh
 
-ABSOLUTE_FILENAME=`readlink -f "$0"`
-HOME_FOLDER=`dirname "$ABSOLUTE_FILENAME"`
+ABSOLUTE_FILENAME=$(readlink -f "$0")
+HOME_FOLDER=$(dirname "$ABSOLUTE_FILENAME")
 
 . "$HOME_FOLDER/common/install_func.sh"
 
