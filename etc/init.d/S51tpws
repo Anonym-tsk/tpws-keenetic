@@ -79,7 +79,7 @@ reload() {
 }
 
 firewall_start() {
-    if ! iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
+    if ! iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT"; then
         log WARN "iptables rules not found. Adding..."
         for IFACE in $LOCAL_INTERFACE; do
             iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
@@ -90,7 +90,7 @@ firewall_start() {
 }
 
 firewall_stop() {
-    if iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT$"; then
+    if iptables-save 2>/dev/null | grep -q "to-ports $BIND_PORT"; then
         log WARN "Dropping iptables rules before stopping TPWS service..."
         for IFACE in $LOCAL_INTERFACE; do
             iptables -t nat -D PREROUTING -i "$IFACE" -p tcp --dport 80 -j REDIRECT --to-port "$BIND_PORT"
