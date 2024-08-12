@@ -17,13 +17,16 @@ start() {
   done
 
   $TPWS_BIN --daemon $BIND_IFACE --port=$BIND_PORT --pidfile=$PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
-  firewall_start
+
+  firewall_start_v4
+  firewall_start_v6
 
   echo 'Started TPWS service'
 }
 
 stop() {
-  firewall_stop
+  firewall_stop_v4
+  firewall_stop_v6
 
   if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
     echo 'Service TPWS is not running' >&2
@@ -44,29 +47,27 @@ reload() {
   kill -1 $(cat "$PIDFILE")
 }
 
-firewall_start() {
-  if [ "$1" == "v4" ] || [ -z "$1" ]; then
-    if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
-      for IFACE in $LOCAL_INTERFACE; do
-        iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
-        iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-        iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      done
-    fi
-  fi
-
-  if [ "$1" == "v6" ] || [ -z "$1" ]; then
-    if [ -z "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
-      for IFACE in $LOCAL_INTERFACE; do
-        ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
-        ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-        ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      done
-    fi
+firewall_start_v4() {
+  if [ -z "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      iptables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      iptables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
   fi
 }
 
-firewall_stop() {
+firewall_start_v6() {
+  if [ -z "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
+  fi
+}
+
+firewall_stop_v4() {
   if [ -n "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
       iptables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
@@ -74,7 +75,9 @@ firewall_stop() {
       iptables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
     done
   fi
+}
 
+firewall_stop_v6() {
   if [ -n "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
       ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
@@ -110,10 +113,10 @@ case "$1" in
     reload
     ;;
   firewall-iptables)
-    firewall_start v4
+    firewall_start_v4
     ;;
   firewall-ip6tables)
-    firewall_start v6
+    firewall_start_v6
     ;;
   *)
     echo "Usage: $0 {start|stop|restart|reload|status}"
