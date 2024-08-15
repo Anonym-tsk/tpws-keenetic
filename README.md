@@ -24,6 +24,8 @@
 
 Поделиться опытом можно в разделе [Discussions](https://github.com/Anonym-tsk/tpws-keenetic/discussions).
 
+Если вы не уверены, что вам нужен именно tpws, лучше сначала попробуйте [nfqws](https://github.com/Anonym-tsk/nfqws-keenetic).
+
 ### Что это?
 
 `tpws` - утилита для модификации TCP пакетов на уровне потока, работает как transparent proxy.
@@ -132,3 +134,7 @@ git pull --depth=1
 > ```
 > iptables -I FORWARD -i br0 -p udp --dport 443 -j DROP
 > ```
+
+---
+
+Нравится проект? [Поддержи автора](https://yoomoney.ru/to/410019180291197)! Купи ему немного :beers: или :coffee:!
