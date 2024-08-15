@@ -64,6 +64,14 @@ opkg install curl
 >
 > В режиме `all` будет обрабатываться весь трафик кроме доменов из списка `/opt/etc/tpws/exclude.list`
 
+##### Обновление
+
+Просто запустите установщик еще раз, следуйте инструкциям
+
+```
+/bin/sh -c "$(curl -fsSL https://github.com/Anonym-tsk/tpws-keenetic/raw/master/netinstall.sh)"
+```
+
 ##### Автоматическое удаление
 
 ```
@@ -77,6 +85,14 @@ opkg install git git-http curl
 git clone https://github.com/Anonym-tsk/tpws-keenetic.git --depth 1
 chmod +x ./tpws-keenetic/*.sh
 ./tpws-keenetic/install.sh
+```
+
+##### Обновление
+
+```
+cd tpws-keenetic
+git pull --depth=1
+./install.sh
 ```
 
 ##### Удаление
