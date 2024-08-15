@@ -82,16 +82,6 @@ firewall_start_v4() {
   fi
 }
 
-firewall_start_v6() {
-  if [ -z "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
-    for IFACE in $LOCAL_INTERFACE; do
-      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
-      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
-    done
-  fi
-}
-
 firewall_stop_v4() {
   if [ -n "$(iptables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
@@ -102,7 +92,25 @@ firewall_stop_v4() {
   fi
 }
 
+firewall_start_v6() {
+  if [ "$IPV6_ENABLED" -ne "1" ]; then
+    return
+  fi
+
+  if [ -z "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
+    for IFACE in $LOCAL_INTERFACE; do
+      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+    done
+  fi
+}
+
 firewall_stop_v6() {
+  if [ "$IPV6_ENABLED" -ne "1" ]; then
+    return
+  fi
+
   if [ -n "$(ip6tables-save 2>/dev/null | grep "to-ports $BIND_PORT$")" ]; then
     for IFACE in $LOCAL_INTERFACE; do
       ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
