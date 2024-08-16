@@ -108,7 +108,7 @@ git pull --depth=1
 ### Полезное
 
 1. Конфиг-файл `/opt/etc/tpws/tpws.conf`
-2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|reload|status}`
+2. Скрипт запуска/остановки `/opt/etc/init.d/S51tpws {start|stop|restart|reload|status|version}`
 3. Вручную добавить домены в список можно в файле `/opt/etc/tpws/user.list`
 4. Автоматически добавленные домены `/opt/etc/tpws/auto.list`
 5. Лог автоматически добавленных доменов `/opt/var/log/tpws.log`
