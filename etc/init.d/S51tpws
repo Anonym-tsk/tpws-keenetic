@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="1.0.9"
+VERSION="1.0.10"
 
 . /opt/etc/tpws/tpws.conf
 
@@ -39,7 +39,7 @@ start() {
 
   BIND_IFACE=""
   for IFACE in $LOCAL_INTERFACE; do
-    BIND_IFACE="$BIND_IFACE --bind-iface4=$IFACE"
+    BIND_IFACE="$BIND_IFACE --bind-iface4=$IFACE --bind-iface6=$IFACE"
     echo "Bind to local interface: $IFACE"
   done
 
