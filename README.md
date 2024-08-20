@@ -123,11 +123,10 @@ git pull --depth=1
 5. Лог автоматически добавленных доменов `/opt/var/log/tpws.log`
 6. Домены-исключения `/opt/etc/tpws/exclude.list` (один домен на строке, поддомены учитываются автоматически)
 7. Проверить, что нужные правила добавлены в таблицу маршрутизации `iptables-save | grep "to-ports 999$"`
-> Вы должны увидеть похожие строки (по 3 на каждый выбранный сетевой интерфейс)
+> Вы должны увидеть похожие строки (по 2 на каждый выбранный сетевой интерфейс)
 > ```
 > -A PREROUTING -i br0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 999
 > -A PREROUTING -i br0 -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 999
-> -A PREROUTING -i br0 -p udp -m udp --dport 443 -j REDIRECT --to-ports 999
 > ```
 8. Если ничего не работает...
 > Если ваше устройство поддерживает аппаратное ускорение (flow offloading, hardware nat, hardware acceleration), то iptables могут не работать.
