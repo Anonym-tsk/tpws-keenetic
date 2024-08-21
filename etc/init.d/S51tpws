@@ -106,7 +106,7 @@ firewall_start_v6() {
     for IFACE in $LOCAL_INTERFACE; do
       ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       ip6tables -t nat -A PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      #ip6tables -t nat -A PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
     done
   fi
 }
@@ -120,7 +120,7 @@ firewall_stop_v6() {
     for IFACE in $LOCAL_INTERFACE; do
       ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT
       ip6tables -t nat -D PREROUTING -i $IFACE -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT
-      ip6tables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
+      #ip6tables -t nat -D PREROUTING -i $IFACE -p udp --dport 443 -j REDIRECT --to-port $BIND_PORT
     done
   fi
 }
