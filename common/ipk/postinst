@@ -1,0 +1,15 @@
+#!/bin/sh
+
+source $(dirname $0)/tpws-keenetic.env
+source $(dirname $0)/tpws-keenetic.common
+
+# Stop service if exist
+stop_func
+
+# Install configuration
+fast_install_func
+
+# Starting Services
+start_func
+
+exit 0

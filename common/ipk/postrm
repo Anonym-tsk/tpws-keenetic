@@ -1,0 +1,21 @@
+#!/bin/sh
+
+source $(dirname $0)/tpws-keenetic.env
+source $(dirname $0)/tpws-keenetic.common
+
+# Remove binary file
+remove_binary_func
+
+case "$1" in
+  upgrade)
+    # Do nothing
+    ;;
+  *)
+    # Remove all data
+    remove_all_files_func
+
+    echo "Unnstallation successful"
+    ;;
+esac
+
+exit 0

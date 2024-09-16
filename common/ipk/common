@@ -1,0 +1,123 @@
+#!/bin/sh
+
+CONFDIR="${ROOT_DIR}/etc/tpws"
+CONFFILE=$CONFDIR/tpws.conf
+LISTLOG="${ROOT_DIR}/var/log/tpws.log"
+INIT_SCRIPT="${ROOT_DIR}/etc/init.d/S51tpws"
+INIT_SCRIPT_OWRT="${ROOT_DIR}/etc/init.d/tpws-keenetic"
+TPWS_BIN="${ROOT_DIR}/usr/bin/tpws"
+
+stop_func() {
+  if [ -f "$INIT_SCRIPT" ]; then
+    $INIT_SCRIPT stop
+  elif [ -f "$INIT_SCRIPT_OWRT" ]; then
+    $INIT_SCRIPT_OWRT stop
+  fi
+}
+
+start_func() {
+  if [ -f "$INIT_SCRIPT" ]; then
+    $INIT_SCRIPT start
+  elif [ -f "$INIT_SCRIPT_OWRT" ]; then
+    $INIT_SCRIPT_OWRT start
+  fi
+}
+
+local_interface_func() {
+  if [ -f "$INIT_SCRIPT_OWRT" ]; then
+    echo "br-lan"
+  else
+    echo "br0"
+  fi
+}
+
+ipv6_enabled_func() {
+  # $1 - interface, e.g. br0
+  enabled=$(ip -f inet6 addr show dev "$1" 2>/dev/null | grep "scope global")
+  return $([ -z "$enabled" ])
+}
+
+fast_install_func() {
+  TPWS_INSTALL_TYPE="install"
+  if [ -f "${ROOT_DIR}/tmp/tpws_install_type" ]; then
+    # Set in preinst script
+    TPWS_INSTALL_TYPE=$(cat "${ROOT_DIR}/tmp/tpws_install_type")
+    rm -f "${ROOT_DIR}/tmp/tpws_install_type"
+  fi
+
+  case "$TPWS_INSTALL_TYPE" in
+    install)
+      # Interface
+      DEF_IFACE=$(local_interface_func)
+      sed -i -E "s#LOCAL_INTERFACE=\".+\"#LOCAL_INTERFACE=\"$DEF_IFACE\"#" $CONFFILE
+      echo "Detected local interface: $DEF_IFACE"
+
+      # IPv6
+      IPV6=$(ipv6_enabled_func "$DEF_IFACE" && echo 1 || echo 0)
+      sed -i -E "s#IPV6_ENABLED=(1|0)#IPV6_ENABLED=$IPV6#" $CONFFILE
+      echo "Detected IPv6: $IPV6"
+
+      # Config paths
+      if [ -f "$INIT_SCRIPT_OWRT" ]; then
+        sed -i -E "s#/opt/#/#g" $CONFFILE
+      fi
+
+      echo "Current working mode: auto"
+      echo "You can change settings in the configuration file: $CONFFILE"
+
+      echo "Installation successful"
+      ;;
+    *)
+      # Do nothing
+      ;;
+  esac
+}
+
+remove_binary_func() {
+  rm -f "$TPWS_BIN"
+}
+
+remove_all_files_func() {
+  rm -f $LISTLOG
+  echo -e "\nRemove lists and config? y/N"
+  read yn
+  case $yn in
+    [Yy]* )
+      rm -rf $CONFDIR
+      ;;
+  esac
+}
+
+install_binary_func() {
+  OPKG_CONF="${ROOT_DIR}/etc/opkg.conf"
+
+  if [ -f "$OPKG_CONF" ]; then
+    ARCH=$(cat "$OPKG_CONF" | grep -oE 'mips-3|mips_|mipsel-3|mipsel_|aarch64-3|aarch64_|armv7' | head -n 1)
+    case "$ARCH" in
+      "mips-3"|"mips_") ARCH="mips" ;;
+      "mipsel-3"|"mipsel_") ARCH="mipsel" ;;
+      "aarch64-3"|"aarch64_") ARCH="aarch64" ;;
+      "armv7") ARCH="armv7" ;;
+    esac
+  fi
+
+  if [ -z $ARCH ]; then
+    ARCH=$(uname -m | grep -oE 'mips|mipsel|aarch64|armv7')
+    if [ "$ARCH" == "mips" ]; then
+      if grep -qE 'system type.*MediaTek' /proc/cpuinfo; then
+        ARCH="mipsel"
+      fi
+    fi
+  fi
+
+  if [ -z $ARCH ]; then
+    echo "Failed to detect architecture"
+    exit 1
+  fi
+
+  echo "Detected arch: $ARCH"
+
+  cp -f "${ROOT_DIR}/tmp/tpws_binary/tpws-$ARCH" "${ROOT_DIR}/usr/bin/tpws"
+  chmod +x "${ROOT_DIR}/usr/bin/tpws"
+  rm -rf "${ROOT_DIR}/tmp/tpws_binary"
+}

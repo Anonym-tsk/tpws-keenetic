@@ -1,0 +1,10 @@
+#!/bin/sh
+
+source $(dirname $0)/env
+
+CONFFILE="${ROOT_DIR}/etc/tpws/tpws.conf"
+
+# Set `install` or `upgrade` for postinst script
+echo "$1" > "${ROOT_DIR}/tmp/tpws_install_type"
+
+exit 0

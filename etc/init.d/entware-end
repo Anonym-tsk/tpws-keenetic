@@ -1,0 +1,62 @@
+start() {
+  if is_running; then
+    echo 'Service TPWS is already running' >&2
+    return 1
+  fi
+
+  BIND_IFACE=""
+  for IFACE in $LOCAL_INTERFACE; do
+    BIND_IFACE="$BIND_IFACE --bind-iface4=$IFACE"
+    if [ "$IPV6_ENABLED" -eq "1" ]; then
+      BIND_IFACE="$BIND_IFACE --bind-iface6=$IFACE"
+    fi
+    echo "Bind to local interface: $IFACE"
+  done
+
+  $TPWS_BIN --daemon --debug=syslog --debug-level=$LOG_LEVEL $BIND_IFACE --port=$BIND_PORT --pidfile=$PIDFILE $TPWS_ARGS $TPWS_EXTRA_ARGS
+
+  firewall_start_v4
+  firewall_start_v6
+
+  echo 'Started TPWS service'
+}
+
+stop() {
+  firewall_stop_v4
+  firewall_stop_v6
+
+  if ! is_running; then
+    echo 'Service TPWS is not running' >&2
+    return 1
+  fi
+
+  echo 'Stopping TPWS service...'
+  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status_service
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  reload)
+    reload_service
+    ;;
+  firewall_iptables)
+    firewall_iptables
+    ;;
+  firewall_ip6tables)
+    firewall_ip6tables
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|reload|status}"
+esac

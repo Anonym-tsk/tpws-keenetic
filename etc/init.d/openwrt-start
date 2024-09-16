@@ -1,0 +1,11 @@
+#!/bin/sh /etc/rc.common
+# Openwrt procd script: https://openwrt.org/docs/guide-developer/procd-init-script-example
+
+USE_PROCD=1
+
+START=51
+STOP=19
+
+TPWS_BIN="/usr/bin/tpws"
+CONFFILE="/etc/tpws/tpws.conf"
+PIDFILE="/var/run/tpws.pid"

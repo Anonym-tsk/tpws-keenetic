@@ -1,0 +1,6 @@
+#!/bin/sh
+# Entware startup script
+
+TPWS_BIN="/opt/usr/bin/tpws"
+CONFFILE="/opt/etc/tpws/tpws.conf"
+PIDFILE="/opt/var/run/tpws.pid"

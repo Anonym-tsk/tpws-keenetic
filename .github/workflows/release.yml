@@ -1,0 +1,155 @@
+name: Build and publish release
+
+on:
+  workflow_dispatch:
+    branches:
+      - master
+#  push:
+#    branches:
+#      - 'master'
+#  pull_request:
+#    branches:
+#      - 'master'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Bump version file
+      uses: francktrouillez/auto-bump-version-file@v1
+      with:
+        file: 'VERSION'
+
+    - name: Read version
+      id: version
+      uses: juliangruber/read-file-action@v1
+      with:
+        path: ./VERSION
+        trim: true
+
+    - name: Build packages
+      run: make packages
+
+    - name: Commit and push version file
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add VERSION
+        git commit -m "Version ${{ steps.version.outputs.content }}"
+        git tag -a v${{ steps.version.outputs.content }} -m "Version ${{ steps.version.outputs.content }}"
+        git push origin v${{ steps.version.outputs.content }}
+        git push
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.1.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version.outputs.content }}
+        release_name: Release v${{ steps.version.outputs.content }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release mips
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_mips-3.4.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_mips-3.4.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release mipsel
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_mipsel-3.4.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_mipsel-3.4.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release aarch64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_aarch64-3.10.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_aarch64-3.10.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release armv7
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_armv7-3.2.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_armv7-3.2.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release multiarch
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_all_entware.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_all_entware.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release openwrt
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./out/tpws-keenetic_${{ steps.version.outputs.content }}_all_openwrt.ipk
+        asset_name: tpws-keenetic_${{ steps.version.outputs.content }}_all_openwrt.ipk
+        asset_content_type: application/octet-stream
+
+    - name: Build repository
+      run: make repository
+
+    - name: Sign openwrt repository
+      env:
+        OPENWRT_PUBLIC_KEY: ${{ secrets.OPENWRT_PUBLIC_KEY }}
+        OPENWRT_SECRET_KEY: ${{ secrets.OPENWRT_SECRET_KEY }}
+      run: |
+        git clone https://git.openwrt.org/project/usign.git
+        cd usign/
+        cmake .
+        make
+        cd ..
+
+        echo -e "$OPENWRT_SECRET_KEY" >> ./out/secret.key
+        echo -e "$OPENWRT_PUBLIC_KEY" >> ./out/_pages/openwrt/tpws-keenetic.pub
+        ./usign/usign -S -m ./out/_pages/openwrt/Packages -s ./out/secret.key -c "tpws-keenetic OpenWRT repository"
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./out/_pages
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

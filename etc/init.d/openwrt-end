@@ -1,0 +1,40 @@
+extra_command() {
+  local cmd="$1"
+  local help="$2"
+
+  local extra="$(printf "%-16s%s" "${cmd}" "${help}")"
+  ALL_HELP="${ALL_HELP}\t${extra}\n"
+  ALL_COMMANDS="${ALL_COMMANDS} ${cmd}"
+}
+
+extra_command "firewall_iptables" "Load IPv4 firewall rules"
+extra_command "firewall_ip6tables" "Load IPv6 firewall rules"
+extra_command "firewall_stop" "Unload firewall rules"
+
+start_service() {
+  BIND_IFACE=""
+  for IFACE in $LOCAL_INTERFACE; do
+    BIND_IFACE="$BIND_IFACE --bind-iface4=$IFACE"
+    if [ "$IPV6_ENABLED" -eq "1" ]; then
+      BIND_IFACE="$BIND_IFACE --bind-iface6=$IFACE"
+    fi
+  done
+
+  procd_open_instance
+  procd_set_param command $TPWS_BIN --user=nobody --debug=syslog --debug-level=$LOG_LEVEL $BIND_IFACE --port=$BIND_PORT $TPWS_ARGS $TPWS_EXTRA_ARGS
+  procd_set_param pidfile $PIDFILE
+  procd_set_param stdout 1
+  procd_set_param stderr 1
+  procd_close_instance
+
+  firewall_start_v4
+  firewall_start_v6
+
+  echo 'Started TPWS service'
+}
+
+stop_service() {
+  echo 'Stopping TPWS service...'
+  firewall_stop_v4
+  firewall_stop_v6
+}

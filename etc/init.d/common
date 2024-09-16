@@ -1,0 +1,130 @@
+source "$CONFFILE"
+
+RULE_HTTP="-t nat -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT"
+RULE_HTTPS="-t nat -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT"
+
+is_running() {
+  PID_RUNNING=$(pgrep -nx "$TPWS_BIN" 2>/dev/null)
+
+  if [ -z "$PID_RUNNING" ]; then
+    return 1
+  fi
+
+  if [ ! -f "$PIDFILE" ]; then
+    return 1
+  fi
+
+  PID_SAVED=$(cat "$PIDFILE" 2>/dev/null)
+
+  if [ "$PID_RUNNING" -ne "$PID_SAVED" ]; then
+    return 1
+  fi
+
+  if ! kill -0 $PID_SAVED; then
+    return 1
+  fi
+
+  # 0 = true, 1 = false
+  return 0
+}
+
+status_service() {
+  if is_running; then
+    echo 'Service TPWS is running'
+  else
+    echo 'Service TPWS is stopped'
+  fi
+}
+
+reload_service() {
+  if ! is_running; then
+    echo 'Service TPWS is not running' >&2
+    return 1
+  fi
+
+  echo 'Reloading TPWS service...'
+  kill -1 $(cat "$PIDFILE")
+}
+
+_iptables_add_remove() {
+  CMD=$1 # iptables or ip6tables
+  ACTION=$2 # -I, -A, -D
+  shift 2
+  RULE="$@"
+
+  $CMD -C $RULE 2>/dev/null
+  exists=$? # 0 = true
+
+  if [ "$ACTION" == "-A" ] || [ "$ACTION" == "-I" ]; then
+    if [ $exists -ne 0 ]; then
+      $CMD $ACTION $RULE
+    fi
+  elif [ "$ACTION" == "-D" ] && [ $exists -eq 0 ]; then
+    $CMD $ACTION $RULE
+  fi
+}
+
+_iptables() {
+  _iptables_add_remove iptables "$@"
+}
+
+_ip6tables() {
+  _iptables_add_remove ip6tables "$@"
+}
+
+firewall_start_v4() {
+  for IFACE in $LOCAL_INTERFACE; do
+    if [ -n "$HTTP_ENABLED" ] && [ "$HTTP_ENABLED" -eq "1" ]; then
+      _iptables -A PREROUTING -i $IFACE $RULE_HTTP
+    fi
+    _iptables -A PREROUTING -i $IFACE $RULE_HTTPS
+  done
+}
+
+firewall_stop_v4() {
+  for IFACE in $LOCAL_INTERFACE; do
+    if [ -n "$HTTP_ENABLED" ] && [ "$HTTP_ENABLED" -eq "1" ]; then
+      _iptables -D PREROUTING -i $IFACE $RULE_HTTP
+    fi
+    _iptables -D PREROUTING -i $IFACE $RULE_HTTPS
+  done
+}
+
+firewall_start_v6() {
+  if [ -n "$IPV6_ENABLED" ] && [ "$IPV6_ENABLED" -ne "1" ]; then
+    return
+  fi
+
+  for IFACE in $LOCAL_INTERFACE; do
+    if [ -n "$HTTP_ENABLED" ] && [ "$HTTP_ENABLED" -eq "1" ]; then
+      _ip6tables -A PREROUTING -i $IFACE $RULE_HTTP
+    fi
+    _ip6tables -A PREROUTING -i $IFACE $RULE_HTTPS
+  done
+}
+
+firewall_stop_v6() {
+  if [ -n "$IPV6_ENABLED" ] && [ "$IPV6_ENABLED" -ne "1" ]; then
+    return
+  fi
+
+  for IFACE in $LOCAL_INTERFACE; do
+    if [ -n "$HTTP_ENABLED" ] && [ "$HTTP_ENABLED" -eq "1" ]; then
+      _ip6tables -D PREROUTING -i $IFACE $RULE_HTTP
+    fi
+    _ip6tables -D PREROUTING -i $IFACE $RULE_HTTPS
+  done
+}
+
+firewall_iptables() {
+  firewall_start_v4
+}
+
+firewall_ip6tables() {
+  firewall_start_v6
+}
+
+firewall_stop() {
+  firewall_stop_v4
+  firewall_stop_v6
+}
