@@ -30,6 +30,7 @@ _control:
 		echo "Depends: iptables, busybox" >> out/$(BUILD_DIR)/control/control; \
 	fi
 
+	echo "Conflicts: nfqws-keenetic" >> out/$(BUILD_DIR)/control/control
 	echo "License: MIT" >> out/$(BUILD_DIR)/control/control
 	echo "Section: net" >> out/$(BUILD_DIR)/control/control
 	echo "URL: https://github.com/Anonym-tsk/tpws-keenetic" >> out/$(BUILD_DIR)/control/control
@@ -218,6 +219,7 @@ _repository:
 		echo "Depends: iptables, busybox" >> out/_pages/$(BUILD_DIR)/Packages; \
 	fi
 
+	echo "Conflicts: nfqws-keenetic" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Section: net" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Architecture: $(ARCH)" >> out/_pages/$(BUILD_DIR)/Packages
 	echo "Filename: $(FILENAME)" >> out/_pages/$(BUILD_DIR)/Packages
