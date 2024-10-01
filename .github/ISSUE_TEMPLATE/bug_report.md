@@ -17,7 +17,7 @@ assignees: ''
 Укажите вашего провайдера и тип подключения (ppp/ethernet/...)
 
 **Выполните команды и приложите их вывод**
-`/opt/etc/init.d/S51tpws version`
+`opkg info tpws-keenetic`
 ```
 <ВСТАВИТЬ СЮДА>
 ```
