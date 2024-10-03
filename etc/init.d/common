@@ -4,7 +4,7 @@ RULE_HTTP="-t nat -p tcp --dport 80 -j REDIRECT --to-port $BIND_PORT"
 RULE_HTTPS="-t nat -p tcp --dport 443 -j REDIRECT --to-port $BIND_PORT"
 
 is_running() {
-  PID_RUNNING=$(pgrep -nx "$TPWS_BIN" 2>/dev/null)
+  PID_RUNNING=$(pgrep -nf "$TPWS_BIN" 2>/dev/null)
 
   if [ -z "$PID_RUNNING" ]; then
     return 1
