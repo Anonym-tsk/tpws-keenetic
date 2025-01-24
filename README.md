@@ -124,15 +124,6 @@ opkg info tpws-keenetic
 
 ### Установка на OpenWRT (до версии 24.10 включительно, пакетный менеджер `opkg`)
 
-Пакет работает только с `iptables`.
-Если в вашей системе используется `nftables`, придется удалить `nftables` и `firewall4`, и установить `firewall3` и `iptables`.
-
-Проверить, что ваша система использует `nftables`:
-```
-ls -la /sbin/fw4
-which nft
-```
-
 1. Установите необходимые зависимости
    ```
    opkg update
