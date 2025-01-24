@@ -1,17 +1,26 @@
 # tpws-keenetic
 
-Пакеты для установки `tpws` на маршрутизаторы с поддержкой `opkg`.
+[![GitHub Release](https://img.shields.io/github/release/Anonym-tsk/tpws-keenetic?style=flat&color=green)](https://github.com/Anonym-tsk/tpws-keenetic/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/Anonym-tsk/tpws-keenetic?style=flat)](https://github.com/Anonym-tsk/tpws-keenetic/stargazers)
+[![License](https://img.shields.io/github/license/Anonym-tsk/tpws-keenetic.svg?style=flat&color=orange)](LICENSE)
+[![CloudTips](https://img.shields.io/badge/donate-CloudTips-598bd7.svg?style=flat)](https://pay.cloudtips.ru/p/054d0666)
+[![YooMoney](https://img.shields.io/badge/donate-YooMoney-8037fd.svg?style=flat)](https://yoomoney.ru/to/410019180291197)
+[![Join Telegram group](https://img.shields.io/badge/Telegram_group-Join-blue.svg?style=social&logo=telegram)](https://t.me/nfqws)
 
+Пакеты для установки `tpws` на маршрутизаторы.
+
+> [!IMPORTANT]
 > Данный материал подготовлен в научно-технических целях.
 > Использование предоставленных материалов в целях отличных от ознакомления может являться нарушением действующего законодательства.
 > Автор не несет ответственности за неправомерное использование данного материала.
 
+> [!WARNING]
 > **Вы пользуетесь этой инструкцией на свой страх и риск!**
 > 
 > Автор не несёт ответственности за порчу оборудования и программного обеспечения, проблемы с доступом и потенцией.
 > Подразумевается, что вы понимаете, что вы делаете.
 
-Изначально написано для роутеров Keenetic с установленным entware.
+Изначально написано для роутеров Keenetic/Netcraze с установленным entware.
 Однако, работоспособность также была проверена на прошивках Padavan и OpenWRT (читайте ниже).
 
 Списки проверенного оборудования собираем в [отдельной теме](https://github.com/Anonym-tsk/tpws-keenetic/discussions/6).
@@ -28,7 +37,7 @@
 
 Почитать подробнее можно на [странице авторов](https://github.com/bol-van/zapret) (ищите по ключевому слову `tpws`).
 
-### Подготовка Keenetic
+### Подготовка Keenetic/Netcraze
 
 - Прочитайте инструкцию полностью, прежде, чем начать что-то делать!
 
@@ -38,7 +47,7 @@
 
 - Установить entware на маршрутизатор по инструкции [на встроенную память роутера](https://help.keenetic.com/hc/ru/articles/360021888880) или [на USB-накопитель](https://help.keenetic.com/hc/ru/articles/360021214160).
 
-- Через web-интерфейс Keenetic установить пакеты **Протокол IPv6** (**Network functions > IPv6**) и **Модули ядра подсистемы Netfilter** (**OPKG > Kernel modules for Netfilter** - не путать с "Netflow"). Обратите внимание, что второй компонент отобразится в списке пакетов только после того, как вы отметите к установке первый.
+- Через web-интерфейс Keenetic/Netcraze установить пакеты **Протокол IPv6** (**Network functions > IPv6**) и **Модули ядра подсистемы Netfilter** (**OPKG > Kernel modules for Netfilter** - не путать с "Netflow"). Обратите внимание, что второй компонент отобразится в списке пакетов только после того, как вы отметите к установке первый.
 
 - В разделе "Интернет-фильтры" отключить все сторонние фильтры (NextDNS, SkyDNS, Яндекс DNS и другие).
 
@@ -46,16 +55,9 @@
   - Через telnet: в терминале выполнить `telnet 192.168.1.1`, а потом `exec sh`.
   - Или же подключиться напрямую через SSH (логин - `root`, пароль по умолчанию - `keenetic`, порт - 222 или 22). Для этого в терминале написать `ssh 192.168.1.1 -l root -p 222`.
 
-> **Миграция с версии 1.x.x на 2.x.x:**
-> 
-> Для определения версии выполните команду `opkg info tpws-keenetic` - она работает только на версиях 2.x.x и возвращает информацию о пакете.
-> Если ничего не вернула – у вас установлена старая версия.
->
-> Никакой специальной миграции не требуется, просто переустановите новую версию по инструкции ниже.
-
 ---
 
-### Установка на Keenetic и Entware
+### Установка на Keenetic/Netcraze и другие системы с Entware
 
 1. Установите необходимые зависимости
    ```
@@ -120,7 +122,7 @@ opkg info tpws-keenetic
 
 ---
 
-### Установка на OpenWRT
+### Установка на OpenWRT (до версии 24.10 включительно, пакетный менеджер `opkg`)
 
 Пакет работает только с `iptables`.
 Если в вашей системе используется `nftables`, придется удалить `nftables` и `firewall4`, и установить `firewall3` и `iptables`.
@@ -157,6 +159,7 @@ which nft
    opkg install tpws-keenetic
    ```
 
+> [!NOTE]
 > NB: Все пути файлов, описанные в этой инструкции, начинающиеся с `/opt`, на OpenWRT будут начинаться с корня `/`.
 > Например конфиг расположен в `/etc/tpws/tpws.conf`
 > 
@@ -172,22 +175,22 @@ which nft
 # Интерфейс локальной сети. Обычно `br0`, на OpenWRT - `br-lan`
 # Заполняется автоматически при установке
 # Можно ввести несколько интерфейсов, например LOCAL_INTERFACE="br0 nwg0"
-LOCAL_INTERFACE="br0"
+LOCAL_INTERFACE="..."
 
 # Стратегия обработки трафика
-TPWS_ARGS="--bind-wait-ip=10 --disorder --tlsrec=sni --split-http-req=method --split-pos=2"
+TPWS_ARGS="..."
 
 Режим работы (auto, list, all)
-TPWS_EXTRA_ARGS="--hostlist=/opt/etc/tpws/user.list --hostlist-auto=/opt/etc/tpws/auto.list --hostlist-auto-debug=/opt/var/log/tpws.log --hostlist-exclude=/opt/etc/tpws/exclude.list"
+TPWS_EXTRA_ARGS="..."
 
 # Обрабатывать ли IPv6 соединения
-IPV6_ENABLED=1
+IPV6_ENABLED=0|1
 
 # Обрабатывать ли HTTP
-HTTP_ENABLED=0
+HTTP_ENABLED=0|1
 
 # Логирование в Syslog (0 - silent, 1 - default, 2 - debug)
-LOG_LEVEL=0
+LOG_LEVEL=0|1|2
 ```
 
 ---
@@ -211,7 +214,7 @@ LOG_LEVEL=0
 1. Если ваше устройство поддерживает аппаратное ускорение (flow offloading, hardware nat, hardware acceleration), то iptables могут не работать.
    При включенном offloading пакет не проходит по обычному пути netfilter.
    Необходимо или его отключить, или выборочно им управлять.
-2. На Keenetic можно попробовать выключить или наоборот включить [сетевой ускоритель](https://help.keenetic.com/hc/ru/articles/214470905)
+2. На Keenetic/Netcraze можно попробовать выключить или наоборот включить [сетевой ускоритель](https://help.keenetic.com/hc/ru/articles/214470905)
 3. Возможно, стоит выключить службу классификации трафика IntelliQOS.
 4. Можно попробовать отключить IPv6 на сетевом интерфейсе провайдера через веб-интерфейс маршрутизатора.
 5. Можно попробовать запретить весь UDP трафик на 443 порт для отключения QUIC:
@@ -221,4 +224,4 @@ LOG_LEVEL=0
 
 ---
 
-Нравится проект? [Поддержи автора](https://yoomoney.ru/to/410019180291197)! Купи ему немного :beers: или :coffee:!
+Нравится проект? Поддержи автора [здесь](https://yoomoney.ru/to/410019180291197) или [тут](https://pay.cloudtips.ru/p/054d0666). Купи ему немного :beers: или :coffee:!
